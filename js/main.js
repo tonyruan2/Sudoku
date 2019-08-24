@@ -1,5 +1,7 @@
 ﻿var user_interacting = false;
-var cur_box_id;
+var cur_box_id = "";
+var valid_bg_color = "white";
+var invalid_bg_color = "red";
 
 var grid = [
     [NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN],
@@ -85,16 +87,28 @@ $(document).ready(function () {
     // given a row, color valid boxes white and invalid boxes red
     function color_row_boxes(row) {
         for (var grid_col = 0; grid_col < grid_len; ++grid_col) {
-            var box_id = '#r' + row + 'c' + grid_col;
+            var box_id = 'r' + row + 'c' + grid_col;
 
             if (isNaN(grid[row][grid_col])) {
-                $(box_id).css("background-color", "rgb(255, 255, 255)");
+                if (document.getElementById(box_id)
+                    .style.backgroundColor != valid_bg_color) {
+                    document.getElementById(box_id)
+                        .style.backgroundColor = valid_bg_color;
+                }
             } else if (!has_row_error(row, grid_col)
                 && !has_col_error(row, grid_col)
                 && !has_subgrid_error(row, grid_col)) {
-                $(box_id).css("background-color", "rgb(255, 255, 255)");
+                if (document.getElementById(box_id)
+                    .style.backgroundColor != valid_bg_color) {
+                    document.getElementById(box_id)
+                        .style.backgroundColor = valid_bg_color;
+                }
             } else {
-                $(box_id).css("background-color", "rgb(255, 0, 0)");
+                if (document.getElementById(box_id)
+                    .style.backgroundColor != invalid_bg_color) {
+                    document.getElementById(box_id)
+                        .style.backgroundColor = invalid_bg_color;
+                }
             }
         }
     }
@@ -102,16 +116,28 @@ $(document).ready(function () {
     // given a col, color valid boxes white and invalid boxes red
     function color_col_boxes(col) {
         for (var grid_row = 0; grid_row < grid_len; ++grid_row) {
-            var box_id = '#r' + grid_row + 'c' + col;
+            var box_id = 'r' + grid_row + 'c' + col;
 
             if (isNaN(grid[grid_row][col])) {
-                $(box_id).css("background-color", "rgb(255, 255, 255)");
+                if (document.getElementById(box_id)
+                    .style.backgroundColor != valid_bg_color) {
+                    document.getElementById(box_id)
+                        .style.backgroundColor = valid_bg_color;
+                }
             } else if (!has_row_error(grid_row, col)
                 && !has_col_error(grid_row, col)
                 && !has_subgrid_error(grid_row, col)) {
-                $(box_id).css("background-color", "rgb(255, 255, 255)");
+                if (document.getElementById(box_id)
+                    .style.backgroundColor != valid_bg_color) {
+                    document.getElementById(box_id)
+                        .style.backgroundColor = valid_bg_color;
+                }
             } else {
-                $(box_id).css("background-color", "rgb(255, 0, 0)");
+                if (document.getElementById(box_id)
+                    .style.backgroundColor != invalid_bg_color) {
+                    document.getElementById(box_id)
+                        .style.backgroundColor = invalid_bg_color;
+                }
             }
         }
     }
@@ -135,16 +161,28 @@ $(document).ready(function () {
                     continue;
                 }
 
-                var box_id = '#r' + grid_row + 'c' + grid_col;
+                var box_id = 'r' + grid_row + 'c' + grid_col;
 
                 if (isNaN(grid[grid_row][grid_col])) {
-                    $(box_id).css("background-color", "rgb(255, 255, 255)");
+                    if (document.getElementById(box_id)
+                        .style.backgroundColor != valid_bg_color) {
+                        document.getElementById(box_id)
+                            .style.backgroundColor = valid_bg_color;
+                    }
                 } else if (!has_row_error(grid_row, grid_col)
                     && !has_col_error(grid_row, grid_col)
                     && !has_subgrid_error(grid_row, grid_col)) {
-                    $(box_id).css("background-color", "rgb(255, 255, 255)");
+                    if (document.getElementById(box_id)
+                        .style.backgroundColor != valid_bg_color) {
+                        document.getElementById(box_id)
+                            .style.backgroundColor = valid_bg_color;
+                    }
                 } else {
-                    $(box_id).css("background-color", "rgb(255, 0, 0)");
+                    if (document.getElementById(box_id)
+                        .style.backgroundColor != invalid_bg_color) {
+                        document.getElementById(box_id)
+                            .style.backgroundColor = invalid_bg_color;
+                    }
                 }
             }
         }
@@ -168,7 +206,7 @@ $(document).ready(function () {
 
     $('.box').hover(function () {
         user_interacting = true;
-        cur_box_id = '#' + $(this).attr('id');
+        cur_box_id = this.id;
     }, function () {
             user_interacting = false;
             cur_box_id = "";
@@ -185,8 +223,10 @@ $(document).ready(function () {
                 box_val = key - 96;
             }
             if (box_val) {
-                var box = $(cur_box_id)[0];
-                place_value(box, box_val);
+                var box = document.getElementById(cur_box_id);
+                setTimeout(function () {
+                    place_value(box, box_val);
+                }, 1000);
             }
         }
     });
