@@ -1,0 +1,165 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sudoku</title>
+    <link rel="stylesheet" href="styles.css" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="application/javascript" src="main.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Sudoku</h1>
+        </div>
+
+        <div class="content">
+            <div class="grid">
+                <div class="subgrid" id="top_left_grid">
+                    <div class="box" id="r0c0"></div>
+                    <div class="box" id="r0c1"></div>
+                    <div class="box" id="r0c2"></div>
+
+                    <div class="box" id="r1c0"></div>
+                    <div class="box" id="r1c1"></div>
+                    <div class="box" id="r1c2"></div>
+
+                    <div class="box" id="r2c0"></div>
+                    <div class="box" id="r2c1"></div>
+                    <div class="box" id="r2c2"></div>
+                </div>
+
+                <div class="subgrid" id="top_mid_grid">
+                    <div class="box" id="r0c3"></div>
+                    <div class="box" id="r0c4"></div>
+                    <div class="box" id="r0c5"></div>
+
+                    <div class="box" id="r1c3"></div>
+                    <div class="box" id="r1c4"></div>
+                    <div class="box" id="r1c5"></div>
+
+                    <div class="box" id="r2c3"></div>
+                    <div class="box" id="r2c4"></div>
+                    <div class="box" id="r2c5"></div>
+                </div>
+
+                <div class="subgrid" id="top_right_grid">
+                    <div class="box" id="r0c6"></div>
+                    <div class="box" id="r0c7"></div>
+                    <div class="box" id="r0c8"></div>
+
+                    <div class="box" id="r1c6"></div>
+                    <div class="box" id="r1c7"></div>
+                    <div class="box" id="r1c8"></div>
+
+                    <div class="box" id="r2c6"></div>
+                    <div class="box" id="r2c7"></div>
+                    <div class="box" id="r2c8"></div>
+                </div>
+
+                <div class="subgrid" id="center_left_grid">
+                    <div class="box" id="r3c0"></div>
+                    <div class="box" id="r3c1"></div>
+                    <div class="box" id="r3c2"></div>
+
+                    <div class="box" id="r4c0"></div>
+                    <div class="box" id="r4c1"></div>
+                    <div class="box" id="r4c2"></div>
+
+                    <div class="box" id="r5c0"></div>
+                    <div class="box" id="r5c1"></div>
+                    <div class="box" id="r5c2"></div>
+                </div>
+
+                <div class="subgrid" id="center_mid_grid">
+                    <div class="box" id="r3c3"></div>
+                    <div class="box" id="r3c4"></div>
+                    <div class="box" id="r3c5"></div>
+
+                    <div class="box" id="r4c3"></div>
+                    <div class="box" id="r4c4"></div>
+                    <div class="box" id="r4c5"></div>
+
+                    <div class="box" id="r5c3"></div>
+                    <div class="box" id="r5c4"></div>
+                    <div class="box" id="r5c5"></div>
+                </div>
+
+                <div class="subgrid" id="center_right_grid">
+                    <div class="box" id="r3c6"></div>
+                    <div class="box" id="r3c7"></div>
+                    <div class="box" id="r3c8"></div>
+
+                    <div class="box" id="r4c6"></div>
+                    <div class="box" id="r4c7"></div>
+                    <div class="box" id="r4c8"></div>
+
+                    <div class="box" id="r5c6"></div>
+                    <div class="box" id="r5c7"></div>
+                    <div class="box" id="r5c8"></div>
+                </div>
+
+                <div class="subgrid" id="bottom_left_grid">
+                    <div class="box" id="r6c0"></div>
+                    <div class="box" id="r6c1"></div>
+                    <div class="box" id="r6c2"></div>
+
+                    <div class="box" id="r7c0"></div>
+                    <div class="box" id="r7c1"></div>
+                    <div class="box" id="r7c2"></div>
+
+                    <div class="box" id="r8c0"></div>
+                    <div class="box" id="r8c1"></div>
+                    <div class="box" id="r8c2"></div>
+                </div>
+
+                <div class="subgrid" id="bottom_mid_grid">
+                    <div class="box" id="r6c3"></div>
+                    <div class="box" id="r6c4"></div>
+                    <div class="box" id="r6c5"></div>
+
+                    <div class="box" id="r7c3"></div>
+                    <div class="box" id="r7c4"></div>
+                    <div class="box" id="r7c5"></div>
+
+                    <div class="box" id="r8c3"></div>
+                    <div class="box" id="r8c4"></div>
+                    <div class="box" id="r8c5"></div>
+                </div>
+
+                <div class="subgrid" id="bottom_right_grid">
+                    <div class="box" id="r6c6"></div>
+                    <div class="box" id="r6c7"></div>
+                    <div class="box" id="r6c8"></div>
+
+                    <div class="box" id="r7c6"></div>
+                    <div class="box" id="r7c7"></div>
+                    <div class="box" id="r7c8"></div>
+
+                    <div class="box" id="r8c6"></div>
+                    <div class="box" id="r8c7"></div>
+                    <div class="box" id="r8c8"></div>
+                </div>
+            </div>
+
+            <div class="menu">
+                <input type="button" id="load_btn" onclick="load_puzzle()" value="Load Puzzle"> <br>
+                <input type="button" id="reset_btn" onclick="reset_puzzle()" value="Reset Puzzle"> <br>
+
+                <input type="button" id="undo_btn" onclick="undo_last()" value="Undo"> <br>
+                <input type="button" id="hint_btn" onclick="give_hint()" value="Hint"> <br>
+                <input type="button" id="solve_btn" onclick="solve_puzzle()" value="Solve"> <br>
+
+                <p>
+                    Puzzle Status:
+                    <span id="status">Player is solving...</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
