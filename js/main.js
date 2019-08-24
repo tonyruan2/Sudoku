@@ -226,7 +226,7 @@ $(document).ready(function () {
                 var box = document.getElementById(cur_box_id);
                 setTimeout(function () {
                     place_value(box, box_val);
-                }, 1000);
+                }, 250);
             }
         }
     });
