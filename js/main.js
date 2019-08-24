@@ -1,4 +1,5 @@
 ﻿var user_interacting = false;
+var cur_box_id;
 
 var grid = [
     [NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN],
@@ -167,31 +168,25 @@ $(document).ready(function () {
 
     $('.box').hover(function () {
         user_interacting = true;
-        $(this).addClass('active'); // strictly active on hover
+        cur_box_id = '#' + $(this).attr('id');
     }, function () {
-        $(this).removeClass('active');
-        user_interacting = false;
+            user_interacting = false;
+            cur_box_id = "";
     });
 
     $(document).keypress(function (e) {
         if (user_interacting) {
-            var elem = $('.active');
-            if (elem.length == 1) {
-                var box = elem[0];
-                var key = e.keyCode;
-                var box_val = 0;
+            var box = $(cur_box_id)[0];
+            var key = e.keyCode;
+            var box_val = 0;
 
-                if (key > 48 && key <= 57) { // numbers
-                    box_val = key - 48;
-                } else if (key > 96 && key <= 105) { // numpad
-                    box_val = key - 96;
-                }
-
-                if (box_val) {
-                    place_value(box, box_val);
-                }
-            } else if (elem.length > 1) { // only one box active at a time
-                $('.box').removeClass('active');
+            if (key > 48 && key <= 57) { // numbers
+                box_val = key - 48;
+            } else if (key > 96 && key <= 105) { // numpad
+                box_val = key - 96;
+            }
+            if (box_val) {
+                place_value(box, box_val);
             }
         }
     });
