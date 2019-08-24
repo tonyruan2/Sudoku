@@ -176,9 +176,8 @@ $(document).ready(function () {
 
     $(document).keypress(function (e) {
         if (user_interacting) {
-            var box = $(cur_box_id)[0];
-            var key = e.keyCode;
             var box_val = 0;
+            var key = e.keyCode;
 
             if (key > 48 && key <= 57) { // numbers
                 box_val = key - 48;
@@ -186,6 +185,7 @@ $(document).ready(function () {
                 box_val = key - 96;
             }
             if (box_val) {
+                var box = $(cur_box_id)[0];
                 place_value(box, box_val);
             }
         }
