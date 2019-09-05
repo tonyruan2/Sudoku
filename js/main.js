@@ -1,5 +1,9 @@
 ﻿window.onload = function () {
 
+    /*
+     * button functionality
+     */
+
     document.getElementById("load_btn")
         .addEventListener("click", load_puzzle, false);
     document.getElementById("reset_btn")
@@ -11,6 +15,57 @@
     document.getElementById("solve_btn")
         .addEventListener("click", solve_puzzle, false);
 
+    /*
+     * puzzle storage
+     */
+
+    let easy_puzzles = [
+
+    ];
+
+    let medium_puzzles = [
+
+    ];
+
+    let hard_puzzles = [
+
+    ];
+
+    /*
+     * sudoku grid data
+     */
+
+    function create_Box() {
+        let _value = NaN;
+        let _is_modifiable = true;
+
+        return {
+            value() {
+                return _value;
+            },
+            is_modifiable() {
+                return _is_modifiable;
+            },
+            set_value(new_value) {
+                _value = new_value;
+            },
+            set_modifiable(new_modif) {
+                _is_modifiable = new_modif;
+            }
+        }
+    }
+
+    const grid_len = 9;
+    const subgrid_len = grid_len / 3;
+
+    let grid = [];
+    for (let grid_row = 0; grid_row < grid_len; ++grid_row) {
+        let row = [];
+        for (let grid_col = 0; grid_col < grid_len; ++grid_col) {
+            row.push(create_Box());
+        }
+        grid.push(row);
+    }
 
     const valid_bg_color = "white";
     const invalid_bg_color = "red";
@@ -18,43 +73,21 @@
     let user_interacting = false;
     let cur_box_id = "";
 
-    let grid = [
-        [NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN],
-        [NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN],
-        [NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN],
-        [NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN],
-        [NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN],
-        [NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN],
-        [NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN],
-        [NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN],
-        [NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN]
-    ];
 
-    let grid_modifiable_tbl = [
-        [true, true, true, true, true, true, true, true, true],
-        [true, true, true, true, true, true, true, true, true],
-        [true, true, true, true, true, true, true, true, true],
-        [true, true, true, true, true, true, true, true, true],
-        [true, true, true, true, true, true, true, true, true],
-        [true, true, true, true, true, true, true, true, true],
-        [true, true, true, true, true, true, true, true, true],
-        [true, true, true, true, true, true, true, true, true],
-        [true, true, true, true, true, true, true, true, true]
-    ];
-
-    const grid_len = grid.length;
-    const subgrid_len = grid_len / 3;
+    /*
+     * Error checking for boxes
+     */
 
     // determine if a box is modifiable
     function is_modifiable(box) {
         let box_row = box.id.charAt(1);
         let box_col = box.id.charAt(3);
-        return grid_modifiable_tbl[box_row][box_col];
+        return grid[box_row][box_col].is_modifiable();
     }
 
     // check if a box has a row error
     function has_row_error(box_row, box_col) {
-        const box_val = grid[box_row][box_col];
+        const box_val = grid[box_row][box_col].value();
         if (isNaN(box_val)) {
             return false;
         }
@@ -64,7 +97,7 @@
                 continue;
             }
 
-            if (grid[box_row][grid_col] == box_val) {
+            if (grid[box_row][grid_col].value() == box_val) {
                 return true;
             }
         }
@@ -73,7 +106,7 @@
 
     // check if a box has a column error
     function has_col_error(box_row, box_col) {
-        const box_val = grid[box_row][box_col];
+        const box_val = grid[box_row][box_col].value();
         if (isNaN(box_val)) {
             return false;
         }
@@ -83,7 +116,7 @@
                 continue;
             }
 
-            if (grid[grid_row][box_col] == box_val) {
+            if (grid[grid_row][box_col].value() == box_val) {
                 return true;
             }
         }
@@ -92,7 +125,7 @@
 
     // check if a box has a subgrid error
     function has_subgrid_error(box_row, box_col) {
-        const box_val = grid[box_row][box_col];
+        const box_val = grid[box_row][box_col].value();
         if (isNaN(box_val)) {
             return false;
         }
@@ -108,13 +141,17 @@
                     continue;
                 }
 
-                if (grid[grid_row][grid_col] == box_val) {
+                if (grid[grid_row][grid_col].value() == box_val) {
                     return true;
                 }
             }
         }
         return false;
     }
+
+    /*
+     * Coloring of valid and invalid boxes
+     */
 
     // color a box
     function color_box(box_id, color) {
@@ -130,7 +167,7 @@
         for (let grid_col = 0; grid_col < grid_len; ++grid_col) {
             const box_id = 'r' + row + 'c' + grid_col;
 
-            if (isNaN(grid[row][grid_col])) {
+            if (isNaN(grid[row][grid_col].value())) {
                 color_box(box_id, valid_bg_color);
             } else if (!has_row_error(row, grid_col)
                 && !has_col_error(row, grid_col)
@@ -147,7 +184,7 @@
         for (let grid_row = 0; grid_row < grid_len; ++grid_row) {
             const box_id = 'r' + grid_row + 'c' + col;
 
-            if (isNaN(grid[grid_row][col])) {
+            if (isNaN(grid[grid_row][col].value())) {
                 color_box(box_id, valid_bg_color);
             } else if (!has_row_error(grid_row, col)
                 && !has_col_error(grid_row, col)
@@ -179,7 +216,7 @@
 
                 const box_id = 'r' + grid_row + 'c' + grid_col;
 
-                if (isNaN(grid[grid_row][grid_col])) {
+                if (isNaN(grid[grid_row][grid_col].value())) {
                     color_box(box_id, valid_bg_color);
                 } else if (!has_subgrid_error(grid_row, grid_col)
                     && !has_row_error(grid_row, grid_col)
@@ -205,14 +242,16 @@
         const box_row = box.id.charAt(1);
         const box_col = box.id.charAt(3);
         if (box_val != empty_text_content) {
-            grid[box_row][box_col] = box_val;
+            grid[box_row][box_col].set_value(box_val);
         } else {
-            grid[box_row][box_col] = NaN;
+            grid[box_row][box_col].set_value(NaN);
         }
         handle_grid_coloring(box_row, box_col);
     }
 
-    // user interface methods
+    /*
+     * user interface methods
+     */
 
     // update that the user is interacting when a box is hovered
     $('.box').hover(function () {
@@ -245,7 +284,9 @@
         }
     });
 
-    // methods that support buttons
+    /*
+     * button onclick methods 
+     */
 
     // clear the grid and make all boxes empty
     function clear_grid() {
@@ -253,14 +294,13 @@
             for (let grid_col = 0; grid_col < grid_len; ++grid_col) {
                 let box = document
                     .getElementById('r' + grid_row + 'c' + grid_col);
-                grid_modifiable_tbl[grid_row][grid_col] = true;
+                grid[grid_row][grid_col].set_modifiable(true);
                 place_value(box, empty_text_content);
             }
         }
-        // make unmodifiable boxes modifiable
     }
 
-
+    // load a puzzle with the selected difficulty
     function load_puzzle() {
         clear_grid();
         // check difficulty
@@ -271,20 +311,29 @@
         // make those boxes unmodifiable
     }
 
+    // reset a puzzle to the default state
     function reset_puzzle() {
-
+        // just change puzzle back to unmodifiable tiles
     }
 
+    // undo the last value placement
     function undo_last() {
-
+        // keep array of actions
+        // cleared when grid is cleared/reset or a new puzzle is loaded
     }
 
+    // change or place a correct value into a box
     function give_hint() {
-
+        // try to solve puzzle using given info
+        // give a random uncleared box (if there are any)
+        // otherwise change status
     }
 
+    // solve the puzzle for the player
     function solve_puzzle() {
-
+        // try to solve puzzle using given info
+        // otherwise try with only the unmodifiable boxes
+        // otherwise change status
     }
 
 }
