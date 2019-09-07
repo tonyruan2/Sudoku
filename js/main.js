@@ -22,7 +22,7 @@
      * Information for puzzle storage.
      */
 
-    const empty_box_val = "_";
+    const empty_box_storage_val = "_";
 
     const easy_puzzles = [
         "1__9_4_____4_3_5_6_2_7__49_____1_94__59_7_32__17_2_____83__7_5_5_1_9_6_____6_5__3"
@@ -98,8 +98,9 @@
      * Information for the sudoku grid.
      */
 
+    const empty_box_grid_val = NaN;
     function create_Box() {
-        let _value = NaN;
+        let _value = empty_box_grid_val;
         let _is_modifiable = true;
 
         return {
@@ -135,11 +136,13 @@
     const empty_text_content = "";
     const default_box_text_color = "black";
     const loaded_box_text_color = "blue";
+
     const empty_puzzle
         = "_________________________________________________________________________________";
+    const valid_box_values = "_123456789";
+
     let user_interacting = false;
     let current_box_id = "";
-    let current_puzzle = empty_puzzle;
 
     /*
      * Methods for error checking boxes.
@@ -216,6 +219,16 @@
         return false;
     }
 
+    // check if a box has any errors
+    function has_error(box_row, box_col) {
+        if (has_row_error(box_row, box_col)
+            || has_col_error(box_row, box_col)
+            || has_subgrid_error(box_row, box_col)) {
+            return true;
+        }
+        return false;
+    }
+
     /*
      * Methods for coloring boxes.
      */
@@ -236,9 +249,7 @@
 
             if (isNaN(grid[row][grid_col].value())) {
                 color_box(box_id, valid_bg_color);
-            } else if (!has_row_error(row, grid_col)
-                && !has_col_error(row, grid_col)
-                && !has_subgrid_error(row, grid_col)) {
+            } else if (!has_error(row, grid_col)) {
                 color_box(box_id, valid_bg_color);
             } else {
                 color_box(box_id, invalid_bg_color);
@@ -253,9 +264,7 @@
 
             if (isNaN(grid[grid_row][col].value())) {
                 color_box(box_id, valid_bg_color);
-            } else if (!has_row_error(grid_row, col)
-                && !has_col_error(grid_row, col)
-                && !has_subgrid_error(grid_row, col)) {
+            } else if (!has_error(grid_row, col)) {
                 color_box(box_id, valid_bg_color);
             } else {
                 color_box(box_id, invalid_bg_color);
@@ -285,9 +294,7 @@
 
                 if (isNaN(grid[grid_row][grid_col].value())) {
                     color_box(box_id, valid_bg_color);
-                } else if (!has_subgrid_error(grid_row, grid_col)
-                    && !has_row_error(grid_row, grid_col)
-                    && !has_col_error(grid_row, grid_col)) {
+                } else if (!has_error(grid_row, grid_col)) {
                     color_box(box_id, valid_bg_color);
                 } else {
                     color_box(box_id, invalid_bg_color);
@@ -425,8 +432,8 @@
         assignments.sort(function (a, b) { return 0.5 - Math.random() });
         let reassigned_puzzle = "";
         for (let box_i = 0; box_i < puzzle.length; ++box_i) {
-            if (puzzle.charAt(box_i) == empty_box_val) {
-                reassigned_puzzle += empty_box_val;
+            if (puzzle.charAt(box_i) == empty_box_storage_val) {
+                reassigned_puzzle += empty_box_storage_val;
             } else {
                 reassigned_puzzle += assignments[Number(puzzle.charAt(box_i)) - 1];
             }
@@ -442,12 +449,18 @@
         return transformed_puzzle;
     }
 
-    // select a puzzle
+    // select a valid puzzle
     function select_puzzle(set_of_puzzles) {
-        while (true) {
-            let random_index = Math.floor(Math.random() * (set_of_puzzles.length));
-            selected_puzzle = set_of_puzzles[random_index];
-            if (selected_puzzle != current_puzzle) {
+        let random_index = Math.floor(Math.random() * (set_of_puzzles.length));
+        selected_puzzle = set_of_puzzles[random_index];
+
+        if (selected_puzzle.length != grid_length * grid_length) {
+            selected_puzzle = empty_puzzle;
+        }
+
+        for (let value_i = 0; value_i < selected_puzzle.length; ++value_i) {
+            if (!(valid_box_values.includes(selected_puzzle.charAt(value_i)))) {
+                selected_puzzle = empty_puzzle;
                 break;
             }
         }
@@ -456,7 +469,7 @@
 
     // load a puzzle into the grid
     function load_puzzle_to_grid(puzzle) {
-        current_puzzle = puzzle;
+        current_puzzle_template = puzzle;
         for (let grid_row = 0; grid_row < grid_length; ++grid_row) {
             for (let grid_col = 0; grid_col < grid_length; ++grid_col) {
                 let box = document
@@ -467,7 +480,7 @@
                 // representation of empty box val in storage is "_"
                 // representation of empty box val on the viewed board is ""
                 // set "_" to "" for placement on the board
-                if (puzzle_box_val == empty_box_val) {
+                if (puzzle_box_val == empty_box_storage_val) {
                     puzzle_box_val = empty_text_content;
                 }
 
@@ -500,7 +513,7 @@
                 }
             }
         }
-        current_puzzle = empty_puzzle;
+        current_puzzle_template = empty_puzzle;
     }
 
     // load an easy puzzle
@@ -527,7 +540,7 @@
         load_puzzle_to_grid(scrambled_puzzle);
     }
 
-    // reset a puzzle to the default state
+    // reset a puzzle to its default state
     function reset_puzzle() {
         for (let grid_row = 0; grid_row < grid_length; ++grid_row) {
             for (let grid_col = 0; grid_col < grid_length; ++grid_col) {
@@ -540,11 +553,84 @@
         }
     }
 
+    // check the validity of the current state
+    function current_state_valid() {
+        for (let grid_row = 0; grid_row < grid_length; ++grid_row) {
+            for (let grid_col = 0; grid_col < grid_length; ++grid_col) {
+                if (has_error(grid_row, grid_col)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // return the coordinates of an empty box
+    function has_empty_box() {
+        let box_coords = [];
+        for (let grid_row = 0; grid_row < grid_length; ++grid_row) {
+            for (let grid_col = 0; grid_col < grid_length; ++grid_col) {
+                if (isNaN(grid[grid_row][grid_col].value())) {
+                    box_coords = [grid_row, grid_col];
+                    return box_coords;
+                }
+            }
+        }
+        return box_coords;
+    }
+
+    // helper to solve the puzzle
+    function solve_puzzle_helper() {
+        let empty_box_coords = has_empty_box();
+        if (empty_box_coords.length == 0) {
+            return true;
+        }
+
+        let box_row = empty_box_coords[0];
+        let box_col = empty_box_coords[1];
+        let box = document.getElementById('r' + box_row + 'c' + box_col);
+
+        for (let valid_i = 1; valid_i < valid_box_values.length; ++valid_i) {
+            place_value(box, valid_box_values[valid_i]);
+            if (has_error(box_row, box_col)) {
+                place_value(box, empty_text_content);
+            } else {
+                if (solve_puzzle_helper()) {
+                    return true;
+                }
+                place_value(box, empty_text_content);
+            }
+        }
+        return false;
+    }
+
     // solve the puzzle for the player
+    // first try to solve the puzzle with what is entered
+    // if the puzzle is unsolvable, reset the puzzle
+    // to its default state and try again
     function solve_puzzle() {
-        // try to solve puzzle using given info
-        // otherwise try with only the unmodifiable boxes
-        // otherwise change status
+        if (current_state_valid()) {
+            if (solve_puzzle_helper()) {
+                // change status to solved
+                // make all tiles unmodifiable
+            } else {
+                reset_puzzle();
+                if (solve_puzzle_helper()) {
+                    // change status to solved
+                    // make all tiles unmodifiable
+                } else {
+                    // change status to unsolvable
+                }
+            }
+        } else {
+            reset_puzzle();
+            if (solve_puzzle_helper()) {
+                // change status to solved
+                // make all tiles unmodifiable
+            } else {
+                // change status to unsolvable
+            }
+        }
     }
 
 }
