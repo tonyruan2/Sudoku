@@ -23,75 +23,47 @@
      */
 
     const empty_box_storage_val = "_";
+    const valid_box_values = "_123456789";
+    const empty_puzzle
+        = "_________________________________________________________________________________";
 
     const easy_puzzles = [
-        "1__9_4_____4_3_5_6_2_7__49_____1_94__59_7_32__17_2_____83__7_5_5_1_9_6_____6_5__3"
+        "1__9_4_____4_3_5_6_2_7__49_____1_94__59_7_32__17_2_____83__7_5_5_1_9_6_____6_5__3",
+        "____1_4_6___6_8_7_65___213__4_28_7_35__4_6__92_8_31_5__951___42_2_3_9___1_3_2____",
+        "8_4_____7_65_27_18_72_3_9_5_9__1___3____8____5___7__2_6_1_9_85_25_16_73_3_____6_1",
+        "_74______5_2_48___1_83_7542____1_9_7_2_9_4_8_3_9_8____9476_51_8___47_2_9______67_",
+        "___2____554_718_26___65_9_7___9872____2___8____1524___2_7_65___41_892_636____1___",
+        "______8_57__58___6_2_6_3_918_21__54____4_2____94__73_228_9_5_1_6___28__44_5______",
+        "_23____5_6_7_3_82___4__96_____4_32___4_752_6___19_8_____52__3___32_7_9_6_1____57_",
+        "4_652____732_6___45___387___1_8__9_2_________9_5__4_3___895___33___8_159____462_8",
+        "_8____1939____867__56__14__5_7_34____1_8_7_6____19_2_7__54__93__947____2623____4_",
+        "92_6_3___8_7____6553__________46__824_15_26_765__98__________5924____8_6___2_5_71"
     ];
 
     const medium_puzzles = [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "__97_2_____1_____98_23__7__48__7__5__2_569_8__9__3__67__8__53_25_____8_____9_76__",  
+        "__2598_6_9_5_7__3__4_16___5__9_______7_8_5_1_______3__6___59_2__5__8_9_3_9_2148__",
+        "6_9__8___51_7___8____1__9_2_75__6___8___2___9___3__56_4_7__1____9___5_37___2__6_5",
+        "_29__57__5____4__8____3__51_853______9__8__1______148_46__2____2__4____5__18__34_",
+        "___25____4___16_929______8__6__72_43_________32_94__7__9______424_19___5____28___",
+        "5____4______6_5_1_21____4351__5_9_4_9_2___3_7_3_8_2__1725____96_9_7_6______2____4",
+        "_____2_1___164___96___9__538__2___47_3_____6_45___6__272__8___65___612___6_4_____",
+        "_8_51___6__4__2___79_38__________419_4_____7_168__________21_57___9__3__9___43_2_",
+        "7___4__96______1__2_5________32__45__825_196__57__63________8_9__8______19__5___2",
+        "1_______6__6_7_8___83__5_728459___6___________6___478169_3__51___8_9_3__2_______7"
     ];
 
     const hard_puzzles = [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "_46_____9_7_2_____9__6_58________9_66_53_92_13_9________18_3__2_____2_9_2_____16_",
+        "_62_____7___4_7______5__6__5___43_71__61_93__37_28___4__5__4______7_8___9_____75_",
+        "___4___5_14_9__72___8__1_9___6___8__41_____32__9___6___7_8__5___52__9_43_9___5___",
+        "1___784___7____5____4_13___7__1_98_6_________3_12_7__5___69_1____5____8___985___4",
+        "___4__175___7____3_4______6__1__7_89_2__1__5_49_5__6__8______1_2____4___379__6___",
+        "9__2____7_2___4__38____529__91______5___9___2______63__631____52__7___6_1____9__4",
+        "______32_____49_7__7__18__953_________25879_________456__92__8__9_87_____17______",
+        "__5_74__1____815________62_3_2_______6_345_1_______8_3_57________145____9__16_4__",
+        "_95____2_6_______4__4_62_1____47__9__3__1__6__1__95____5_98_1__8_______9_7____25_",
+        "_4__3__9_1____75___3_8__1____45_9____8_____1____4_69____1__3_6___32____9_5__9__7_"
     ];
 
     /*
@@ -137,12 +109,33 @@
     const default_box_text_color = "black";
     const loaded_box_text_color = "blue";
 
-    const empty_puzzle
-        = "_________________________________________________________________________________";
-    const valid_box_values = "_123456789";
-
     let user_interacting = false;
     let current_box_id = "";
+
+    const in_progress_status = "In progress...";
+    const solved_status = "Solved!";
+    const unsolvable_status = "Unsolvable!";
+    let puzzle_status = in_progress_status;
+
+    /*
+     * Methods for updating puzzle status
+     */ 
+
+    // change the status message
+    function change_status(message) {
+        document.getElementById('status').innerHTML = message;
+        puzzle_status = message;
+    }
+
+    // check and update the status message
+    function update_status() {
+        if (has_empty_box().length == 0 && current_state_valid()) {
+            change_status(solved_status);
+        }
+        else if (puzzle_status != in_progress_status) {
+            change_status(in_progress_status);
+        }
+    }
 
     /*
      * Methods for error checking boxes.
@@ -321,42 +314,9 @@
             grid[box_row][box_col].set_value(NaN);
         }
         handle_grid_coloring(box_row, box_col);
+        update_status();
     }
 
-    /*
-     * Methods for user interaction.
-     */
-
-    // update that the user is interacting when a box is hovered
-    $('.box').hover(function () {
-        if (is_modifiable(this)) {
-            user_interacting = true;
-            current_box_id = this.id;
-        }
-    }, function () {
-            if (is_modifiable(this)) {
-                user_interacting = false;
-                current_box_id = "";
-            }
-    });
-
-    // read valid key presses when the user is interacting
-    $(document).keypress(function (e) {
-        if (user_interacting) {
-            let box_val = 0;
-            const key = e.keyCode;
-
-            if (key > 48 && key <= 57) { // numbers
-                box_val = key - 48;
-            } else if (key > 96 && key <= 105) { // numpad
-                box_val = key - 96;
-            }
-            if (box_val) {
-                let box = document.getElementById(current_box_id);
-                place_value(box, box_val);
-            }
-        }
-    });
 
     /**
      * Methods for loading in puzzles.
@@ -469,7 +429,6 @@
 
     // load a puzzle into the grid
     function load_puzzle_to_grid(puzzle) {
-        current_puzzle_template = puzzle;
         for (let grid_row = 0; grid_row < grid_length; ++grid_row) {
             for (let grid_col = 0; grid_col < grid_length; ++grid_col) {
                 let box = document
@@ -513,7 +472,6 @@
                 }
             }
         }
-        current_puzzle_template = empty_puzzle;
     }
 
     // load an easy puzzle
@@ -605,32 +563,60 @@
     }
 
     // solve the puzzle for the player
-    // first try to solve the puzzle with what is entered
+    // try to solve the puzzle with the current inputs
     // if the puzzle is unsolvable, reset the puzzle
     // to its default state and try again
     function solve_puzzle() {
         if (current_state_valid()) {
-            if (solve_puzzle_helper()) {
-                // change status to solved
-                // make all tiles unmodifiable
-            } else {
+            let is_solvable = solve_puzzle_helper();
+            if (!is_solvable) {
                 reset_puzzle();
-                if (solve_puzzle_helper()) {
-                    // change status to solved
-                    // make all tiles unmodifiable
-                } else {
-                    // change status to unsolvable
+                is_solvable = solve_puzzle_helper();
+                if (!is_solvable) {
+                    change_status(unsolvable_status);
                 }
             }
         } else {
             reset_puzzle();
-            if (solve_puzzle_helper()) {
-                // change status to solved
-                // make all tiles unmodifiable
-            } else {
-                // change status to unsolvable
+            let is_solvable = solve_puzzle_helper();
+            if (!is_solvable) {
+                change_status(unsolvable_status);
             }
         }
     }
 
+    /*
+     * Methods for user interaction.
+     */
+
+    // update that the user is interacting when a box is hovered
+    $('.box').hover(function () {
+        if (is_modifiable(this)) {
+            user_interacting = true;
+            current_box_id = this.id;
+        }
+    }, function () {
+        if (is_modifiable(this)) {
+            user_interacting = false;
+            current_box_id = "";
+        }
+    });
+
+    // read valid key presses when the user is interacting
+    $(document).keypress(function (e) {
+        if (user_interacting) {
+            let box_val = 0;
+            const key = e.keyCode;
+
+            if (key > 48 && key <= 57) { // numbers
+                box_val = key - 48;
+            } else if (key > 96 && key <= 105) { // numpad
+                box_val = key - 96;
+            }
+            if (box_val) {
+                let box = document.getElementById(current_box_id);
+                place_value(box, box_val);
+            }
+        }
+    });
 }
