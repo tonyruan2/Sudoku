@@ -111,6 +111,9 @@
     margin: 10px 50px 10px 50px;
     border-radius: 15px;
     border-color: black;
+    -webkit-transition-duration: 0.5s;
+    transition-duration: 0.5s;
+    cursor: pointer;
 }
 
 #easy_puzzle_btn {
@@ -126,5 +129,11 @@
 }
 
 #reset_btn, #clear_btn, #solve_btn {
-    background-color: grey;
+    background-color: dodgerblue;
+}
+
+#easy_puzzle_btn:hover, #medium_puzzle_btn:hover, #hard_puzzle_btn:hover,
+#reset_btn:hover, #clear_btn:hover, #solve_btn:hover {
+    background-color: white;
+    color: black;
 }
