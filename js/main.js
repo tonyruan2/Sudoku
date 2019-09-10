@@ -107,7 +107,7 @@
     const invalid_bg_color = "red";
     const empty_text_content = "";
     const default_box_text_color = "black";
-    const loaded_box_text_color = "blue";
+    const loaded_box_text_color = "blueviolet";
 
     let user_interacting = false;
     let current_box_id = "";
